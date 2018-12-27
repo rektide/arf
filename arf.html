@@ -200,7 +200,7 @@ function load(){
 		.map(async function(param){
 			const
 			  f = await fetch(param, {mode: "no-cors"}),
-			  json = f.json()
+			  json = await f.json()
 			Object.assign(data, json)
 			corpus.name = param
 		})
