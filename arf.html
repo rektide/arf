@@ -122,16 +122,20 @@ function typeOut(el){
 	iterate()
 }
 
-const arf= ["abort", "retry", "fail"]
+function insertLine(text){
+	const textNode = document.createElement("div")
+	textNode.textContent = text
+	confirm.parentNode.insertBefore(textNode, confirm)
+}
+
+const arf = ["abort", "retry", "fail"]
 function command(){
 	const
 	  text= terminal.textContent,
 	  match= arf.indexOf(text)
 	  found= arf[ match]
 	if(!found){
-		const textNode= document.createElement("div")
-		textNode.textContent= `Not found: ${text}`
-		confirm.parentNode.insertBefore( textNode, confirm)
+		insertLine(`Not found: ${text}`)
 	}else{
 	}
 	terminal.textContent= ""
