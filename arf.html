@@ -134,12 +134,23 @@ function command(){
 	const
 	  text= terminal.textContent,
 	  match= arf.indexOf(text)
-	  found= arf[ match]
+	  found= arf[match],
+	  flavorText= found && typeof(data) !== "undefined" && data[found]
 	if(!found){
 		insertLine(`Not found: ${text}`)
 	}else{
+		insertLine(text)
+		if(flavorText){
+			insertLine( flavorText)
+		}
 	}
-	terminal.textContent= ""
+	confirm.className = found ? "" : "hidden"
+	terminal.textContent = ""
+}
+window.data= {
+  abort: "Do not attempt operation again, but continue",
+  retry: "Retry operation",
+  fail: "Cease execution & terminate"
 }
 </script>
 </body>
