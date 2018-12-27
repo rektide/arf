@@ -11,14 +11,27 @@ body{
 	font-family: "Fira Mono", Consolas, "SFMono-Regular", "Liberation Mono", Menlo, "Lucida Sans Typewriter", "Courier New", Courier, Monaco, monospace;
 	font-size: 3vh;
 }
+div{
+	padding-bottom: 0.9vh;
+}
 #abort{
 	color: var(--abort);
 }
-#retry{
+#retry, #confirm{
 	color: var(--retry);
 }
-#fail{
+#fail, #deny{
 	color: var(--fail);
+}
+.hidden{
+	display: none;
+}
+#confirm{
+	padding-right: 3vh;
+	font-size: 8vh;
+}
+#deny{
+	font-size: 5.5vh;
 }
 #terminal {
 	cursor: pointer;
@@ -44,6 +57,7 @@ a:-webkit-any-link{
 <form id="offer" typeof="http://schema.org/Offer"/>
 <input id="pendingAction" type="hidden"></input>
 
+<div>
 <span id="abort" class="option" property="potentialAction" typeof="http://arf.voodoowarez.com/AbortAction">
 <span property="target">
 	<a href="#abort">abort</a>
@@ -61,10 +75,12 @@ a:-webkit-any-link{
 	<a href="#fail">fail</a>
 </span>
 </span>?
+</div>
 
-<br/>
-<div id="confirm"></div>
+<div id="confirm" class="hidden"><span id="confirm">✔</span> <span id="deny">🗙</span></div>
+<div>
 $ <span id="terminal"></span><span class="blink">▆</span>
+</div>
 
 <script defer>
 const
