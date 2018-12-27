@@ -1,0 +1,73 @@
+<html>
+<head>
+<title>Abort Retry Fail</title>
+<style>
+body{
+	--earth-tone: #70564a;
+	--abort: #ab7a54;
+	--retry: #89ad68;
+	--fail: #ad6a68;
+	margin: 8vh 8vw;
+	font-family: "Fira Mono", Consolas, "SFMono-Regular", "Liberation Mono", Menlo, "Lucida Sans Typewriter", "Courier New", Courier, Monaco, monospace;
+	font-size: 3vh;
+}
+#abort{
+	color: var(--abort);
+}
+#retry{
+	color: var(--retry);
+}
+#fail{
+	color: var(--fail);
+}
+#terminal {
+	cursor: pointer;
+}
+a:-webkit-any-link{
+	color: unset;
+}
+.blink{
+    animation:blinkingText 0.8s infinite;
+}
+@keyframes blinkingText{
+    0%{   color: var(--text);}
+    49%{  color: transparent;}
+    50%{  color: transparent;}
+    99%{  color: transparent;}
+    100%{ color: var(--text)000;}
+}
+</style>
+<script>
+const terminal= document.getElementById("terminal")
+function keyListen(){
+	terminal.
+}
+</script>
+</head>
+<body style="background-color: var(--earth-tone)" onkeydown="javascript:keyListen">
+
+<form id="offer" typeof="http://schema.org/Offer"/>
+
+<span id="abort" class="option" property="potentialAction" typeof="http://arf.voodoowarez.com/AbortAction">
+<span property="target">
+	<a href="#abort">abort</a>
+</span>
+</span>,
+
+<span id="retry" class="option" property="potentialAction" typeof="http://arf.voodoowarez.com/RetryAction">
+<span property="target">
+	<a href="#retry">retry</a>
+</span>
+</span>,
+
+<span id="fail"  class="option" property="potentialAction" typeof="http://arf.voodoowarez.com/FailAction">
+<span property="target">
+	<a href="#fail">fail</a>
+</span>
+</span>?
+
+<br/>
+<span id="terminal">$ </span><span class="blink">▆</span>
+
+</body>
+</html>
