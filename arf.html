@@ -60,19 +60,20 @@ a:-webkit-any-link{
 <div>
 <span id="abort" class="option" property="potentialAction" typeof="http://arf.voodoowarez.com/AbortAction">
 <span property="target">
-	<a href="#abort">abort</a>
+	<a href="#abort" onclick="typeOut(this)" ontouchstart="typeOut(this)"
+>abort</a>
 </span>
 </span>,
 
 <span id="retry" class="option" property="potentialAction" typeof="http://arf.voodoowarez.com/RetryAction">
 <span property="target">
-	<a href="#retry">retry</a>
+	<a href="#retry" onclick="typeOut(this)" ontouchstart="typeOut(this)">retry</a>
 </span>
 </span>,
 
 <span id="fail"  class="option" property="potentialAction" typeof="http://arf.voodoowarez.com/FailAction">
 <span property="target">
-	<a href="#fail">fail</a>
+	<a href="#fail" onclick="typeOut(this)" ontouchstart="typeOut(this)">fail</a>
 </span>
 </span>?
 </div>
@@ -103,6 +104,23 @@ function keyListen(evt){
 	// add text to buffer
 	terminal.textContent= terminal.textContent+ key
 }
+
+function typeOut(el){
+	let text= el.textContent
+	function iterate(){
+		setTimeout(function(){
+			if(text.length){
+				const next= text.substring( 0, 1)
+				text= text.substring( 1)
+				terminal.textContent= `${terminal.textContent}${next}`
+				iterate() // loop again, with new random time
+			}else{
+			}
+		}, 150 + (350 * Math.random()))
+	}
+	iterate()
+}
+
 const arf= ["abort", "retry", "fail"]
 function command(){
 	const
@@ -113,6 +131,7 @@ function command(){
 		const textNode= document.createElement("div")
 		textNode.textContent= `Not found: ${text}`
 		confirm.parentNode.insertBefore( textNode, confirm)
+	}else{
 	}
 	terminal.textContent= ""
 }
