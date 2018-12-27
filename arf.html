@@ -22,6 +22,7 @@ body{
 }
 #terminal {
 	cursor: pointer;
+	display: inline-block;
 }
 a:-webkit-any-link{
 	color: unset;
@@ -37,16 +38,11 @@ a:-webkit-any-link{
     100%{ color: var(--text)000;}
 }
 </style>
-<script>
-const terminal= document.getElementById("terminal")
-function keyListen(){
-	terminal.
-}
-</script>
 </head>
-<body style="background-color: var(--earth-tone)" onkeydown="javascript:keyListen">
 
+<body style="background-color: var(--earth-tone)" onkeydown="keyListen(event)">
 <form id="offer" typeof="http://schema.org/Offer"/>
+<input id="pendingAction" type="hidden"></input>
 
 <span id="abort" class="option" property="potentialAction" typeof="http://arf.voodoowarez.com/AbortAction">
 <span property="target">
@@ -67,7 +63,43 @@ function keyListen(){
 </span>?
 
 <br/>
-<span id="terminal">$ </span><span class="blink">▆</span>
+<div id="confirm"></div>
+$ <span id="terminal"></span><span class="blink">▆</span>
 
+<script defer>
+const
+  confirm= document.getElementById("confirm")
+  terminal= document.getElementById("terminal")
+function keyListen(evt){
+	let key= event.key
+	if( key=== "Enter"){
+		return command()
+	}
+	// delete
+	if(["ArrowLeft", "Delete", "Backspace"].indexOf( key)!== -1){
+		terminal.textContent= terminal.textContent.slice(0, terminal.textContent.length- 1)
+		return
+	}
+	if( key.length> 1){
+		console.warn(`Not programmed to handle '${key}'`)
+		return
+	}
+	// add text to buffer
+	terminal.textContent= terminal.textContent+ key
+}
+const arf= ["abort", "retry", "fail"]
+function command(){
+	const
+	  text= terminal.textContent,
+	  match= arf.indexOf(text)
+	  found= arf[ match]
+	if(!found){
+		const textNode= document.createElement("div")
+		textNode.textContent= `Not found: ${text}`
+		confirm.parentNode.insertBefore( textNode, confirm)
+	}
+	terminal.textContent= ""
+}
+</script>
 </body>
 </html>
