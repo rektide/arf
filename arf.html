@@ -144,15 +144,18 @@ const arf = ["abort", "retry", "fail"]
 function command(){
 	const
 	  text= terminal.textContent,
-	  match= arf.indexOf(text),
+	  textLower= text.toLowerCase(),
+	  match= arf.indexOf(textLower),
 	  found= arf[match],
 	  flavorText= found && typeof(data) !== "undefined" && data[found]
 	if(!found){
+		window.location.hash= ""
+		action.value= ""
 		insertLine(`Not found: ${text}`)
 	}else{
 		window.location.hash= found
-		pendingAction.value= found
-		insertLine(text)
+		action.value= found
+		insertLine(textLower)
 		if(flavorText){
 			insertLine( flavorText, {style: "italic"})
 		}
