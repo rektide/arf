@@ -115,6 +115,7 @@ function typeOut(el){
 				terminal.textContent= `${terminal.textContent}${next}`
 				iterate() // loop again, with new random time
 			}else{
+				command()
 			}
 		}, 150 + (350 * Math.random()))
 	}
