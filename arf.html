@@ -8,7 +8,7 @@ body{
 	--abort: #ab7a54;
 	--retry: #89ad68;
 	--fail: #ad6a68;
-	margin: 8vh 8vw;
+	margin: 7vh 8vw;
 	font-family: "Fira Mono", Consolas, "SFMono-Regular", "Liberation Mono", Menlo, "Lucida Sans Typewriter", "Courier New", Courier, Monaco, monospace;
 	font-size: 3vh;
 }
@@ -60,24 +60,26 @@ a:-webkit-any-link{
 <body style="background-color: var(--earth-tone)" onkeydown="keyListen(event)">
 <form id="offer" typeof="http://schema.org/Offer">
 <input id="do" name="" type="hidden"></input>
+<input id="corpus" name="" type="hidden"></input>
+
+<div id="motd"></div>
 
 <div>
 <span id="abort" class="option" property="potentialAction" typeof="http://arf.voodoowarez.com/AbortAction">
 <span property="target">
-	<a href="#abort" onclick="typeOut(this)" ontouchstart="typeOut(this)"
->abort</a>
+	<a href="#abort" onclick="typeOut(this)">abort</a>
 </span>
 </span>,
 
 <span id="retry" class="option" property="potentialAction" typeof="http://arf.voodoowarez.com/RetryAction">
 <span property="target">
-	<a href="#retry" onclick="typeOut(this)" ontouchstart="typeOut(this)">retry</a>
+	<a href="#retry" onclick="typeOut(this)">retry</a>
 </span>
 </span>,
 
 <span id="fail"  class="option" property="potentialAction" typeof="http://arf.voodoowarez.com/FailAction">
 <span property="target">
-	<a href="#fail" onclick="typeOut(this)" ontouchstart="typeOut(this)">fail</a>
+	<a href="#fail" onclick="typeOut(this)">fail</a>
 </span>
 </span>?
 </div>
@@ -92,8 +94,10 @@ $ <span id="terminal"></span><span class="blink">▆</span>
 <script defer>
 "use strict";
 const
+  motd= document.getElementById("motd"),
   offer= document.getElementById("offer"),
   hidden= document.getElementById("do"),
+  corpus= document.getElementById("corpus"),
   confirm= document.getElementById("confirm"),
   terminal= document.getElementById("terminal")
 function keyListen(evt){
@@ -188,15 +192,39 @@ function doDeny(){
 }
 
 function load(){
-	const url = new URL(window.location);
-	const loaded = [...url.searchParams.keys()]
+	const
+	  url = new URL(window.location),
+	  keys = [...url.searchParams.keys()],
+	  loaded = keys
 		.filter(param => commands.indexOf(param) === -1)
 		.map(async function(param){
 			const
 			  f = await fetch(param, {mode: "no-cors"}),
 			  json = f.json()
 			Object.assign(data, json)
+			corpus.name = param
 		})
+	Promise.all(loaded).then(function(){
+		motd.textContent = data.motd
+		// if completing, "restore" view state
+		const
+		  actions = keys.filter(param => arf.indexOf(param) !== -1),
+		  rerun= actions[ 0]
+		if( !rerun){
+			return
+		}
+		terminal.textContent = rerun
+		command()
+		doDeny() // close confirm
+		// write output
+		const
+		  outputKey = `do${rerun.slice(0, 1).toUpperCase()}${rerun.slice(1)}`,
+		  output= data[outputKey]
+		if(output){
+			insertLine(output, {style:"italic"})
+		}
+		insertLine()
+	})
 }
 load()
 </script>
