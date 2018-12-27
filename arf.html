@@ -85,8 +85,10 @@ $ <span id="terminal"></span><span class="blink">▆</span>
 </div>
 
 <script defer>
+"use strict";
 const
-  confirm= document.getElementById("confirm")
+  pendingAction= document.getElementById("pendingAction"),
+  confirm= document.getElementById("confirm"),
   terminal= document.getElementById("terminal")
 function keyListen(evt){
 	let key= event.key
@@ -123,8 +125,11 @@ function typeOut(el){
 	iterate()
 }
 
-function insertLine(text){
+function insertLine(text, {style}={}){
 	const textNode = document.createElement("div")
+	if(style){
+		textNode.style["font-style"]= style
+	}
 	textNode.textContent = text
 	confirm.parentNode.insertBefore(textNode, confirm)
 }
@@ -133,15 +138,17 @@ const arf = ["abort", "retry", "fail"]
 function command(){
 	const
 	  text= terminal.textContent,
-	  match= arf.indexOf(text)
+	  match= arf.indexOf(text),
 	  found= arf[match],
 	  flavorText= found && typeof(data) !== "undefined" && data[found]
 	if(!found){
 		insertLine(`Not found: ${text}`)
 	}else{
+		window.location.hash= found
+		pendingAction.value= found
 		insertLine(text)
 		if(flavorText){
-			insertLine( flavorText)
+			insertLine( flavorText, {style: "italic"})
 		}
 	}
 	confirm.className = found ? "" : "hidden"
