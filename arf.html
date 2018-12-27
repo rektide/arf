@@ -142,6 +142,7 @@ function insertLine(text, {style}={}){
 
 const arf = ["abort", "retry", "fail"]
 const confirmDeny = ["confirm", "deny"]
+const commands = [...arf, ...confirmDeny]
 function command(){
 	const
 	  text= terminal.textContent,
@@ -185,6 +186,19 @@ function doDeny(){
 	terminal.textContent= ""
 	confirm.className = "hidden"
 }
+
+function load(){
+	const url = new URL(window.location);
+	const loaded = [...url.searchParams.keys()]
+		.filter(param => commands.indexOf(param) === -1)
+		.map(async function(param){
+			const
+			  f = await fetch(param, {mode: "no-cors"}),
+			  json = f.json()
+			Object.assign(data, json)
+		})
+}
+load()
 </script>
 </body>
 </html>
