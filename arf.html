@@ -58,8 +58,8 @@ a:-webkit-any-link{
 </head>
 
 <body style="background-color: var(--earth-tone)" onkeydown="keyListen(event)">
-<form id="offer" typeof="http://schema.org/Offer"/ action="/">
-<input id="do" name="do" type="hidden"></input>
+<form id="offer" typeof="http://schema.org/Offer">
+<input id="do" name="" type="hidden"></input>
 
 <div>
 <span id="abort" class="option" property="potentialAction" typeof="http://arf.voodoowarez.com/AbortAction">
@@ -93,7 +93,7 @@ $ <span id="terminal"></span><span class="blink">▆</span>
 "use strict";
 const
   offer= document.getElementById("offer"),
-  action= document.getElementById("do"),
+  hidden= document.getElementById("do"),
   confirm= document.getElementById("confirm"),
   terminal= document.getElementById("terminal")
 function keyListen(evt){
@@ -141,20 +141,29 @@ function insertLine(text, {style}={}){
 }
 
 const arf = ["abort", "retry", "fail"]
+const confirmDeny = ["confirm", "deny"]
 function command(){
 	const
 	  text= terminal.textContent,
-	  textLower= text.toLowerCase(),
+	  textLower= text.toLowerCase()
+	// check confirm/deny
+	const cdIndex= confirmDeny.indexOf(textLower)
+	if(hidden.name && cdIndex !== -1){
+		cdIndex === 0 ? doConfirm() : doDeny()
+		return
+	}
+	// find command
+	const
 	  match= arf.indexOf(textLower),
 	  found= arf[match],
 	  flavorText= found && typeof(data) !== "undefined" && data[found]
 	if(!found){
 		window.location.hash= ""
-		action.value= ""
+		hidden.name = ""
 		insertLine(`Not found: ${text}`)
 	}else{
 		window.location.hash= found
-		action.value= found
+		hidden.name = found
 		insertLine(textLower)
 		if(flavorText){
 			insertLine( flavorText, {style: "italic"})
@@ -170,11 +179,11 @@ window.data= {
 }
 
 function doConfirm(){
-	
+	offer.submit()
 }
-
 function doDeny(){
 	terminal.textContent= ""
+	confirm.className = "hidden"
 }
 </script>
 </body>
