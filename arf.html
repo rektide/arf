@@ -8,7 +8,8 @@ body{
 	--abort: #ab7a54;
 	--retry: #89ad68;
 	--fail: #ad6a68;
-	margin: 7vh 8vw;
+	padding: 1.7vh 1.7vw;
+	margin: 5vh 5vw;
 	font-family: "Fira Mono", Consolas, "SFMono-Regular", "Liberation Mono", Menlo, "Lucida Sans Typewriter", "Courier New", Courier, Monaco, monospace;
 	font-size: 3vh;
 }
@@ -81,12 +82,14 @@ a:-webkit-any-link{
 <span property="target">
 	<a href="#fail" onclick="typeOut(this)">fail</a>
 </span>
-</span>?
+</span>
+
+<a href="#help" onclick="typeOut({textContent:'help'})">?</a>
 </div>
 
 <div id="confirm" class="hidden">
 <span id="confirm" title="confirm" onclick="doConfirm()">✔</span>
-<span id="deny" title="deny" onclick="doDeny()">🗙</span></div>
+<span id="deny" title="deny" onclick="doDeny()">❌</span></div>
 <div>
 $ <span id="terminal"></span><span class="blink">▆</span>
 </div>
@@ -146,8 +149,11 @@ function insertLine(text, {style}={}){
 
 const arf = ["abort", "retry", "fail"]
 const confirmDeny = ["confirm", "deny"]
-const commands = [...arf, ...confirmDeny]
+const help = ["help"]
+const wall = ["wall", "echo"]
+const commands = [...arf, ...confirmDeny, ...help, ...wall]
 function command(){
+	window.location.hash= ""
 	const
 	  text= terminal.textContent,
 	  textLower= text.toLowerCase()
@@ -157,13 +163,29 @@ function command(){
 		cdIndex === 0 ? doConfirm() : doDeny()
 		return
 	}
-	// find command
+	// help
+	if(help.indexOf(textLower) !== -1){
+		insertLine(`commands:`)
+		insertLine(`abort, retry, fail: respond to exception`)
+		insertLine(`confirm: send response`)
+		insertLine(`deny: clear response`)
+		insertLine(`echo, wall: send message`)
+		return
+	}
+	// wall
+	console.log({wall, textLower})
+	if(wall.indexOf(textLower.substring(0, 4)) !== -1){
+		hidden.name= "wall"
+		hidden.value= text.substring(5)
+		doConfirm()
+		return
+	}
+	// find arf command
 	const
 	  match= arf.indexOf(textLower),
 	  found= arf[match],
 	  flavorText= found && typeof(data) !== "undefined" && data[found]
 	if(!found){
-		window.location.hash= ""
 		hidden.name = ""
 		insertLine(`Not found: ${text}`)
 	}else{
@@ -208,22 +230,26 @@ function load(){
 		motd.textContent = data.motd
 		// if completing, "restore" view state
 		const
-		  actions = keys.filter(param => arf.indexOf(param) !== -1),
-		  rerun= actions[ 0]
-		if( !rerun){
+		  rerun = keys.filter(param => arf.indexOf(param) !== -1)[0],
+		  wall = url.searchParams.get("wall")
+		if( rerun){
+			terminal.textContent = rerun
+			command()
+			doDeny() // close confirm
 			return
+			// write output
+			const
+			  outputKey = `do${rerun.slice(0, 1).toUpperCase()}${rerun.slice(1)}`,
+			  output= data[outputKey]
+			if(output){
+				insertLine(output, {style:"italic"})
+			}
+			insertLine()
 		}
-		terminal.textContent = rerun
-		command()
-		doDeny() // close confirm
-		// write output
-		const
-		  outputKey = `do${rerun.slice(0, 1).toUpperCase()}${rerun.slice(1)}`,
-		  output= data[outputKey]
-		if(output){
-			insertLine(output, {style:"italic"})
+		if( wall){
+			insertLine( "sent to all:")
+			insertLine( wall, {style:"italic"})
 		}
-		insertLine()
 	})
 }
 load()
